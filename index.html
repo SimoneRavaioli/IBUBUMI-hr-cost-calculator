@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HR Cost Calculator - Hospitality Industry</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div class="container">
+        <!-- Header Section -->
+        <header class="header">
+            <h1>HR Cost Calculator - Hospitality Industry</h1>
+            <p class="header__subtitle">Based on Indonesian hospitality industry standards</p>
+        </header>
+
+        <!-- Grand Totals Section (Moved to Top) -->
+        <section class="grand-totals">
+            <h2>Grand Totals Overview</h2>
+            <div class="totals-grid">
+                <div class="total-card total-card--staff">
+                    <div class="total-icon">👥</div>
+                    <div class="total-content">
+                        <span class="total-label">Total Staff Count</span>
+                        <span class="total-value" id="totalStaffCount">0</span>
+                    </div>
+                </div>
+                <div class="total-card total-card--monthly">
+                    <div class="total-icon">💰</div>
+                    <div class="total-content">
+                        <span class="total-label">Monthly Cost</span>
+                        <div class="cost-display">
+                            <span class="cost-idr" id="grandTotalMonthlyIDR">Rp 0</span>
+                            <span class="cost-eur" id="grandTotalMonthlyEUR">€ 0</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="total-card total-card--annual">
+                    <div class="total-icon">📊</div>
+                    <div class="total-content">
+                        <span class="total-label">Annual Cost</span>
+                        <div class="cost-display">
+                            <span class="cost-idr" id="grandTotalAnnualIDR">Rp 0</span>
+                            <span class="cost-eur" id="grandTotalAnnualEUR">€ 0</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="total-card total-card--per-guest">
+                    <div class="total-icon">🏨</div>
+                    <div class="total-content">
+                        <span class="total-label">Cost per Guest/Month</span>
+                        <div class="cost-display">
+                            <span class="cost-idr" id="costPerGuestMonthlyIDR">Rp 0</span>
+                            <span class="cost-eur" id="costPerGuestMonthlyEUR">€ 0</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Cost Visualization Section -->
+        <section class="visualizations">
+            <h2>Cost Analysis</h2>
+            <div class="charts-grid">
+                <div class="chart-container">
+                    <h3>Department Cost Breakdown</h3>
+                    <canvas id="departmentPieChart"></canvas>
+                </div>
+                <div class="chart-container">
+                    <h3>Monthly vs Annual Costs by Department</h3>
+                    <canvas id="monthlyAnnualChart"></canvas>
+                </div>
+                <div class="chart-container">
+                    <h3>Staff Distribution</h3>
+                    <canvas id="staffDistributionChart"></canvas>
+                </div>
+                <div class="chart-container">
+                    <h3>Cost per Employee by Department</h3>
+                    <canvas id="costPerEmployeeChart"></canvas>
+                </div>
+            </div>
+        </section>
+
+        <!-- Department Summary Section -->
+        <section class="department-summary">
+            <h2>Department Summary</h2>
+            <div class="summary-table-container">
+                <table class="summary-table" id="departmentSummaryTable">
+                    <thead>
+                        <tr>
+                            <th>Department</th>
+                            <th>Staff Count</th>
+                            <th>Monthly Cost (IDR)</th>
+                            <th>Monthly Cost (EUR)</th>
+                            <th>Annual Cost (IDR)</th>
+                            <th>Annual Cost (EUR)</th>
+                            <th>Avg. Cost per Employee</th>
+                        </tr>
+                    </thead>
+                    <tbody id="departmentSummaryBody">
+                        <!-- Populated by JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- Staff Roles Table -->
+        <section class="staff-roles">
+            <h2>Staff Roles & Costs</h2>
+            <div class="table-controls">
+                <button class="btn btn-primary" id="addRoleBtn">+ Add Role</button>
+                <button class="btn btn-secondary" id="resetBtn">Reset to Defaults</button>
+                <button class="btn btn-secondary" id="exportBtn">Export CSV</button>
+            </div>
+            <div class="table-container">
+                <table class="roles-table" id="rolesTable">
+                    <thead>
+                        <tr>
+                            <th>Role</th>
+                            <th>Department</th>
+                            <th>Staff #</th>
+                            <th>Base Salary (IDR)</th>
+                            <th>Base Salary (EUR)</th>
+                            <th>Monthly Cost (IDR)</th>
+                            <th>Monthly Cost (EUR)</th>
+                            <th>Annual Cost (IDR)</th>
+                            <th>Annual Cost (EUR)</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="rolesTableBody">
+                        <!-- Populated by JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- Configuration Panel (Moved to Bottom) -->
+        <section class="config-panel">
+            <h2>Configuration Settings</h2>
+            
+            <div class="config-grid">
+                <div class="config-group">
+                    <h3>Global Settings</h3>
+                    <div class="form-group">
+                        <label class="form-label" for="exchangeRate">Exchange Rate (IDR to EUR)</label>
+                        <input type="number" id="exchangeRate" class="form-control" value="19000" min="1">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="facilityGuests">Facility Size (guests)</label>
+                        <input type="number" id="facilityGuests" class="form-control" value="60" min="1">
+                    </div>
+                </div>
+
+                <div class="config-group">
+                    <h3>BPJS Contribution Rates (%)</h3>
+                    <div class="form-group">
+                        <label class="form-label" for="bpjsKesehatan">BPJS Kesehatan</label>
+                        <input type="number" id="bpjsKesehatan" class="form-control" value="4.00" step="0.01" min="0">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="bpjsJHT">JHT</label>
+                        <input type="number" id="bpjsJHT" class="form-control" value="3.70" step="0.01" min="0">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="bpjsJP">JP</label>
+                        <input type="number" id="bpjsJP" class="form-control" value="2.00" step="0.01" min="0">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="bpjsJKM">JKM</label>
+                        <input type="number" id="bpjsJKM" class="form-control" value="0.30" step="0.01" min="0">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="bpjsJKK">JKK</label>
+                        <input type="number" id="bpjsJKK" class="form-control" value="0.89" step="0.01" min="0">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Total BPJS Rate</label>
+                        <div class="form-control readonly" id="totalBPJS">10.89%</div>
+                    </div>
+                </div>
+
+                <div class="config-group">
+                    <h3>Additional Settings</h3>
+                    <div class="form-group">
+                        <label class="form-label" for="thrMonths">THR (months)</label>
+                        <input type="number" id="thrMonths" class="form-control" value="1.0" step="0.1" min="0">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="overtimeBuffer">Overtime Buffer (%)</label>
+                        <input type="number" id="overtimeBuffer" class="form-control" value="1.5" step="0.1" min="0">
+                    </div>
+                </div>
+
+                <div class="config-group">
+                    <h3>Quick Presets</h3>
+                    <div class="preset-buttons">
+                        <button class="btn btn-outline" data-preset="small">30 Guests</button>
+                        <button class="btn btn-outline" data-preset="medium">60 Guests</button>
+                        <button class="btn btn-outline" data-preset="large">100 Guests</button>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>

@@ -1,4 +1,4 @@
-# HR Cost Calculator - Hospitality Industry
+# HR Cost Calculator - Ibu Bumi (West Sumba)
 
 A comprehensive web-based HR cost calculator designed specifically for hospitality businesses, based on Indonesian labor market data and regulations.
 
